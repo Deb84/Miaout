@@ -28,54 +28,40 @@ function Instance.new(hl)
     return self
 end
 
-function GetIndexFromLayout(layoutIndex, layout)
-    return layoutIndex[layout]
-end
-
 function Instance:GetCurrentLayout()
     return self.hl.get_config("general.layout")
 end
 
-function Instance:ChangeLayout(newLayout)
+function Instance:UpdateLayout(newLayout)
     self.hl.config({
         general = {layout = newLayout}
     })
 end
 
-function Instance:SwitchNextLayout()
+function Instance:SwitchLayout(step)
     self.lastLayout = self:GetCurrentLayout()
+    local currentIndex = self.layoutIndex[self.lastLayout]
+    local layoutLength = #self.layouts
 
-    local nextLayoutIndex = self.layoutIndex[self.lastLayout] + 1
+    local nextIndex =((currentIndex - 1 + step) % layoutLength) + 1
 
-    if nextLayoutIndex > #self.layouts then
-        nextLayoutIndex = 1
-    end
+    self:UpdateLayout(self.layouts[nextIndex])
+end
 
-    local nextLayout = self.layouts[nextLayoutIndex]
-
-    self:ChangeLayout(nextLayout)
+function Instance:SwitchNextLayout()
+    self:SwitchLayout(1)
 end
 
 function Instance:SwitchPrevLayout()
-    self.lastLayout = self:GetCurrentLayout()
-
-    local nextLayoutIndex = self.layoutIndex[self.lastLayout] - 1
-
-    if nextLayoutIndex == 0 then
-        nextLayoutIndex = #self.layouts
-    end
-
-    local nextLayout = self.layouts[nextLayoutIndex]
-
-    self:ChangeLayout(nextLayout)
+    self:SwitchLayout(-1)
 end
 
 function Instance:SwitchLastLayout()
-    local nextLastLayout = self:GetCurrentLayout()
+    local currentLayout = self:GetCurrentLayout()
 
-    self:ChangeLayout(self.lastLayout)
+    self:UpdateLayout(self.lastLayout)
 
-    self.lastLayout = nextLastLayout
+    self.lastLayout = currentLayout
 end
 
 function Instance:SwitchDefaultLayout()
@@ -91,7 +77,7 @@ function Instance:SwitchDefaultLayout()
         self.lastLayout = currentLayout
     end
 
-    self:ChangeLayout(newLayout)
+    self:UpdateLayout(newLayout)
 end
 
 return Instance
