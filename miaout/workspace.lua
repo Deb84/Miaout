@@ -14,6 +14,13 @@ local function subscribleEvents(self)
 
         self:LoadWorkspaceLayout(workspace)
     end)
+
+    hl.on("workspace.active", function (workspace)
+        local lastWorkspace = hl.get_last_workspace()
+        self:SaveWorkspaceState(lastWorkspace)
+
+        self:LoadWorkspaceLayout(workspace)
+    end)
 end
 
 function Instance.new(hl, layout)
@@ -37,20 +44,16 @@ function Instance:LoadWorkspaceLayout(workspace)
     local workspaceState = self.workspaceStates[workspace.id]
 
     if workspaceState then
-        self.layout:ChangeLayout(workspaceState.layout)
+        self.layout:UpdateLayout(workspaceState.layout)
     end
 end
 
 function Instance:SwitchToWorkspace(workspaceSelector)
     local hl = self.hl
 
-    self:SaveWorkspaceState(hl.get_active_workspace())
     hl.dispatch(hl.dsp.focus({workspace = workspaceSelector}))
 
     local workspace = hl.get_active_workspace()
-
-    self:LoadWorkspaceLayout(workspace)
-
     return workspace
 end
 
