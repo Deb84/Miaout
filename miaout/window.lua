@@ -31,7 +31,7 @@ function Instance:SwapWindows()
     hl.dispatch(hl.dsp.window.bring_to_top())
 end
 
-function Instance:SwapWindowMonitor()
+function Instance:MoveWindowMonitor()
     local hl = self.hl
 
     local monitors = hl.get_monitors()
