@@ -63,7 +63,7 @@ function Instance:NewWorkspace()
     return workspace
 end
 
-function Instance:SwapWorkspaceMonitor()
+function Instance:MoveWorkspaceMonitor()
     local hl = self.hl
 
     local monitors = hl.get_monitors()
@@ -107,7 +107,7 @@ function Instance:SwitchNextMonitorWorkspace()
     self:SwitchToWorkspace("m+1")
 end
 
-function Instance:SwitchPreviousMonitorWorkspace()
+function Instance:SwitchPrevMonitorWorkspace()
     self:SwitchToWorkspace("m-1")
 end
 
