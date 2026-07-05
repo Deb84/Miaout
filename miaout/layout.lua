@@ -1,7 +1,7 @@
 local Instance = {}
 Instance.__index = Instance
 
-function Instance.new(hl)
+function Instance.new()
     local defaultLayout = hl.get_config("general.layout")
 
     local layouts = {
@@ -18,7 +18,6 @@ function Instance.new(hl)
     end
 
     local self = setmetatable({}, Instance)
-    self.hl = hl
     self.layouts = layouts
     self.layoutIndex = layoutIndex
 
@@ -29,11 +28,11 @@ function Instance.new(hl)
 end
 
 function Instance:GetCurrentLayout()
-    return self.hl.get_config("general.layout")
+    return hl.get_config("general.layout")
 end
 
 function Instance:UpdateLayout(newLayout)
-    self.hl.config({
+    hl.config({
         general = {layout = newLayout}
     })
 end

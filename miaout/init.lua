@@ -4,12 +4,12 @@ local window = require("miaout.window")
 
 local M = {}
 
-function M.Init(hl)
+function M.Init()
     local Instances = {}
 
-    Instances.layout = layout.new(hl)
-    Instances.workspace = workspace.new(hl, Instances.layout)
-    Instances.window = window.new(hl, Instances.workspace)
+    Instances.layout = layout.new()
+    Instances.window = window.new()
+    Instances.workspace = workspace.new(Instances.layout, Instances.window)
 
     return Instances
 end

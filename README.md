@@ -7,16 +7,16 @@ local miaout = require("miaout")
 ```
 
 ```lua
-miaout = miaout.Init(hl)
+miaout = miaout.Init()
 ```
-> [!IMPORTANT]  
-> **`hl.config({general = {layout = ...}})` need to be set before `miaout = miaout.Init(hl)`**
+> [!IMPORTANT]
+> **`hl.config({general = {layout = ...}})` need to be set before `miaout = miaout.Init()`**
 
 ## Bind usage
 ```lua
 hl.bind("KEY(S)", function()
   miaout.scope.func
-end
+end)
 ```
 
 ## Functions
@@ -91,7 +91,7 @@ miaout.window:Maximise()
 ```
 Maximise the active window (toggle switch)
 ```lua
-miaout.window:Maximise()
+miaout.window:Default()
 ```
 Reset the window fullscreen state to the default value
 

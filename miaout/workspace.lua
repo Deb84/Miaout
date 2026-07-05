@@ -2,8 +2,6 @@ local Instance = {}
 Instance.__index = Instance
 
 local function subscribleEvents(self)
-    local hl = self.hl
-
 
     -- the behaviour is weird here, active workspace is actually the last workspace
     hl.on("monitor.focused", function (monitor)
@@ -12,21 +10,29 @@ local function subscribleEvents(self)
 
         local workspace = monitor.active_workspace
 
-        self:LoadWorkspaceLayout(workspace)
+        self:LoadWorkspaceState(workspace)
     end)
 
     hl.on("workspace.active", function (workspace)
         local lastWorkspace = hl.get_last_workspace()
         self:SaveWorkspaceState(lastWorkspace)
 
-        self:LoadWorkspaceLayout(workspace)
+        self:LoadWorkspaceState(workspace)
+    end)
+
+    hl.on("window.close", function (window)
+        local workspaceState = self.workspaceStates[window.workspace.id]
+        if not workspaceState then return end
+        local activeWindowState = workspaceState.activeWindowState
+        if not activeWindowState then return end
+        self.workspaceStates[window.workspace.id].activeWindowState = nil
     end)
 end
 
-function Instance.new(hl, layout)
+function Instance.new(layout, window)
     local self = setmetatable({}, Instance)
-    self.hl = hl
     self.layout = layout
+    self.window = window
     self.workspaceStates = {}
 
     subscribleEvents(self)
@@ -34,23 +40,50 @@ function Instance.new(hl, layout)
     return self
 end
 
+function Instance:LazyLoadWindowState(windowState)
+    hl.timer(function()
+        self:LoadWindowState(windowState)
+    end, { timeout = 1, type = "oneshot" })
+end
+
+
 function Instance:SaveWorkspaceState(workspace)
+    local lastWindow = workspace.last_window
+
+    local activeWindowState = nil
+    if lastWindow then
+        activeWindowState = {
+            window = lastWindow;
+            fullscreen = lastWindow.fullscreen,
+            fullscreen_client = lastWindow.fullscreen_client,
+            size = lastWindow.size,
+        }
+    end
+
     self.workspaceStates[workspace.id] = {
-        layout = self.hl.get_config("general.layout")
+        layout = hl.get_config("general.layout"),
+        activeWindowState = activeWindowState
     }
 end
 
-function Instance:LoadWorkspaceLayout(workspace)
-    local workspaceState = self.workspaceStates[workspace.id]
+function Instance:LoadWindowState(windowState)
+    self.window:FocusWindow(windowState.window)
+    self.window:SetFullscreenState({internal = windowState.fullscreen, client = windowState.fullscreen_client})
 
-    if workspaceState then
-        self.layout:UpdateLayout(workspaceState.layout)
+end
+
+function Instance:LoadWorkspaceState(workspace)
+    local workspaceState = self.workspaceStates[workspace.id]
+    if not workspaceState then return end
+
+    if workspaceState.activeWindowState then
+        self:LazyLoadWindowState(workspaceState.activeWindowState) -- need to load window state after the workspace loading
     end
+
+    self.layout:UpdateLayout(workspaceState.layout)
 end
 
 function Instance:SwitchToWorkspace(workspaceSelector)
-    local hl = self.hl
-
     hl.dispatch(hl.dsp.focus({workspace = workspaceSelector}))
 
     local workspace = hl.get_active_workspace()
@@ -58,13 +91,12 @@ function Instance:SwitchToWorkspace(workspaceSelector)
 end
 
 function Instance:NewWorkspace()
-    local workspaces = self.hl.get_workspaces()
+    local workspaces = hl.get_workspaces()
     local workspace = self:SwitchToWorkspace(workspaces[#workspaces].id + 1)
     return workspace
 end
 
 function Instance:MoveWorkspaceMonitor()
-    local hl = self.hl
 
     local monitors = hl.get_monitors()
     local monitorsPerId = {}
@@ -78,6 +110,8 @@ function Instance:MoveWorkspaceMonitor()
     end
 
     local currentMonitor = hl.get_active_window().monitor
+        if not currentMonitor then return end
+
     local nextMonitorId = currentMonitor.id - 1
     local nextMonitor = monitorsPerId[nextMonitorId]
 

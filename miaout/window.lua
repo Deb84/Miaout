@@ -1,10 +1,8 @@
 local Instance = {}
 Instance.__index = Instance
 
-function Instance.new(hl, workspace)
+function Instance.new()
     local self = setmetatable({}, Instance)
-    self.hl = hl
-    self.workspace = workspace
 
     -- memory
     self.windowInitialFullscreenState = {}
@@ -14,17 +12,15 @@ end
 
 function Instance:MoveToNextWorkspace()
     local workspaceMove = "e+1"
-    self.hl.dispatch(self.hl.dsp.window.move({ workspace = workspaceMove}))
+    hl.dispatch(hl.dsp.window.move({ workspace = workspaceMove}))
 end
 
 function Instance:MoveToPrevWorkspace()
     local workspaceMove = "e-1"
-    self.hl.dispatch(self.hl.dsp.window.move({ workspace = workspaceMove}))
+    hl.dispatch(hl.dsp.window.move({ workspace = workspaceMove}))
 end
 
 function Instance:SwapWindows()
-    local hl = self.hl
-
     local last = hl.get_last_window()
 
     hl.dispatch(hl.dsp.window.swap({target = last}))
@@ -32,8 +28,6 @@ function Instance:SwapWindows()
 end
 
 function Instance:MoveWindowMonitor()
-    local hl = self.hl
-
     local monitors = hl.get_monitors()
     local monitorsPerId = {}
 
@@ -46,6 +40,8 @@ function Instance:MoveWindowMonitor()
     end
 
     local currentMonitor = hl.get_active_window().monitor
+    if not currentMonitor then return end
+
     local nextMonitorId = currentMonitor.id - 1
     local nextMonitor = monitorsPerId[nextMonitorId]
 
@@ -64,12 +60,11 @@ function Instance:MoveWindowMonitor()
 end
 
 local function changeFullscreenState(self, internal, client)
-    local hl = self.hl
-
     local window = hl.get_active_window()
+    if not window then return end
 
-    local initalState = self.windowInitialFullscreenState[window.pid]
-    self.windowInitialFullscreenState[window.pid] = {internal = window.fullscreen, client = window.fullscreen_client}
+    local initalState = self.windowInitialFullscreenState[window.stable_id]
+    self.windowInitialFullscreenState[window.stable_id] = {internal = window.fullscreen, client = window.fullscreen_client}
 
     if not initalState or initalState.internal > 1 then
         initalState = {internal = 0, client = 1}
@@ -95,6 +90,14 @@ end
 
 function Instance:Default()
     changeFullscreenState(self, 0, 0)
+end
+
+function Instance:FocusWindow(window)
+    hl.dispatch(hl.dsp.focus({ window = window}))
+end
+
+function Instance:SetFullscreenState(state)
+    hl.dispatch(hl.dsp.window.fullscreen_state(state))
 end
 
 return Instance
