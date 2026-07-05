@@ -27,6 +27,12 @@ local function subscribleEvents(self)
         if not activeWindowState then return end
         self.workspaceStates[window.workspace.id].activeWindowState = nil
     end)
+
+    hl.on("workspace.removed", function (workspace)
+        local workspaceState = self.workspaceStates[workspace.id]
+        if not workspaceState then return end
+        self.workspaceStates[workspace.id] = nil
+    end)
 end
 
 function Instance.new(layout, window)
@@ -34,18 +40,12 @@ function Instance.new(layout, window)
     self.layout = layout
     self.window = window
     self.workspaceStates = {}
+    self.lock = 0
 
     subscribleEvents(self)
 
     return self
 end
-
-function Instance:LazyLoadWindowState(windowState)
-    hl.timer(function()
-        self:LoadWindowState(windowState)
-    end, { timeout = 1, type = "oneshot" })
-end
-
 
 function Instance:SaveWorkspaceState(workspace)
     local lastWindow = workspace.last_window
@@ -67,9 +67,20 @@ function Instance:SaveWorkspaceState(workspace)
 end
 
 function Instance:LoadWindowState(windowState)
+    if windowState.stable_id == hl.get_active_window().stable_id then return end
     self.window:FocusWindow(windowState.window)
     self.window:SetFullscreenState({internal = windowState.fullscreen, client = windowState.fullscreen_client})
 
+end
+
+function Instance:LazyLoadWindowState(windowState)
+    self.lock = self.lock + 1
+    local lock = self.lock
+
+    hl.timer(function()
+        if self.lock ~= lock then return end
+        self:LoadWindowState(windowState)
+    end, { timeout = 1, type = "oneshot" })
 end
 
 function Instance:LoadWorkspaceState(workspace)
