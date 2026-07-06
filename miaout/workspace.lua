@@ -66,6 +66,12 @@ function Instance:SaveWorkspaceState(workspace)
     }
 end
 
+function timer(fun, timeout)
+    hl.timer(function(...)
+        fun(...)
+    end, { timeout = timeout, type = "oneshot" })
+end
+
 function Instance:LoadWindowState(windowState)
     if windowState.stable_id == hl.get_active_window().stable_id then return end
     self.window:FocusWindow(windowState.window)
@@ -77,10 +83,10 @@ function Instance:LazyLoadWindowState(windowState)
     self.lock = self.lock + 1
     local lock = self.lock
 
-    hl.timer(function()
+    timer(function ()
         if self.lock ~= lock then return end
         self:LoadWindowState(windowState)
-    end, { timeout = 1, type = "oneshot" })
+    end, 1)
 end
 
 function Instance:LoadWorkspaceState(workspace)
@@ -97,14 +103,20 @@ end
 function Instance:SwitchToWorkspace(workspaceSelector)
     hl.dispatch(hl.dsp.focus({workspace = workspaceSelector}))
 
+
     local workspace = hl.get_active_workspace()
     return workspace
 end
 
 function Instance:NewWorkspace()
-    local workspaces = hl.get_workspaces()
-    local workspace = self:SwitchToWorkspace(workspaces[#workspaces].id + 1)
-    return workspace
+    local max = 0
+
+    for _, ws in ipairs(hl.get_workspaces()) do
+        if ws.id > max then
+            max = ws.id
+        end
+    end
+    return self:SwitchToWorkspace(max + 1)
 end
 
 function Instance:MoveWorkspaceMonitor()
