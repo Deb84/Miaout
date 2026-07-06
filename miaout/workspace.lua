@@ -20,11 +20,17 @@ local function subscribleEvents(self)
         self:LoadWorkspaceState(workspace)
     end)
 
+    hl.on("window.move_to_workspace", function (window, workspace)
+        for id, ws in ipairs(self.workspaceStates) do
+            if workspace.id == id then return end
+            if ws.activeWindowState.window.stable_id ~= window.stable_id then return end
+            self.workspaceStates[id].activeWindowState = nil
+        end
+    end)
+
     hl.on("window.close", function (window)
         local workspaceState = self.workspaceStates[window.workspace.id]
         if not workspaceState then return end
-        local activeWindowState = workspaceState.activeWindowState
-        if not activeWindowState then return end
         self.workspaceStates[window.workspace.id].activeWindowState = nil
     end)
 
@@ -73,7 +79,7 @@ function timer(fun, timeout)
 end
 
 function Instance:LoadWindowState(windowState)
-    if windowState.stable_id == hl.get_active_window().stable_id then return end
+    if windowState.window.stable_id == hl.get_active_window().stable_id then return end
     self.window:FocusWindow(windowState.window)
     self.window:SetFullscreenState({internal = windowState.fullscreen, client = windowState.fullscreen_client})
 
@@ -95,6 +101,7 @@ function Instance:LoadWorkspaceState(workspace)
 
     if workspaceState.activeWindowState then
         self:LazyLoadWindowState(workspaceState.activeWindowState) -- need to load window state after the workspace loading
+        hl.notification.create({text = workspace.id, timeout = 3000})
     end
 
     self.layout:UpdateLayout(workspaceState.layout)
