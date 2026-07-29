@@ -1,5 +1,5 @@
 # Miaout
-A really simple layout/workspace/window "manager" for hyprland lua config
+A really simple *overengeeneried* workspace/window "manager" for hyprland lua config
 
 ## Setup
 ```lua
@@ -10,7 +10,10 @@ local miaout = require("miaout")
 miaout = miaout.Init()
 ```
 > [!IMPORTANT]
-> **`hl.config({general = {layout = ...}})` need to be set before `miaout = miaout.Init()`**
+> **`hl.config({...})` need to be set before `miaout = miaout.Init()`**
+
+## Config
+See config docs [Here](./Docs/CONFIG.md)
 
 ## Bind usage
 ```lua
@@ -19,80 +22,128 @@ hl.bind("KEY(S)", function()
 end)
 ```
 
-## Functions
-
-### Layout
-```lua
-miaout.layout:SwitchNextLayout()
-```
-Switch to the next layout
-```lua
-miaout.layout:SwitchLastLayout()
-```
-Switch to the last layout
-```lua
-miaout.layout:SwitchPrevLayout()
-```
-Switch to the previous layout
-```lua
-miaout.layout:SwitchDefaultLayout()
-```
-Switch to your default layout (see the the note above)
+## Methods
 
 ### Workspace
+
+**Some methods need a HL.Workspace as argument, to use the current workspace:**  
+```lua
+miaout.workspace.current:method()
+```
+
 ```lua
 miaout.workspace:NewWorkspace()
 ```
 Create a new workspace
+
+#### Navigation
+
 ```lua
-miaout.workspace:SwitchNextWorkspace()
+miaout.workspace:NextWorkspace()
 ```
-Switch to the next workspace (e+1)
+Focus the next workspace (e+1)
 ```lua
-miaout.workspace:SwitchPreviousWorkspace()
+miaout.workspace:PrevWorkspace()
 ```
-Switch to the next workspace (e-1)
+Focus the next workspace (e-1)
+
 ```lua
-miaout.workspace:SwitchNextMonitorWorkspace()
+miaout.workspace:NextMonitorWorkspace()
 ```
-Switch to the next monitor workspace (m+1)
+Focus the next monitor workspace (m+1)
+
 ```lua
-miaout.workspace:SwitchPrevMonitorWorkspace()
+miaout.workspace:PrevMonitorWorkspace()
 ```
-Switch to the next monitor workspace (m-1)
+Focus the next monitor workspace (m-1)
+
 ```lua
-miaout.workspace:MoveWorkspaceMonitor()
+miaout.workspace:MoveToNextMonitor(workspace)
 ```
-Move the workspace to the next Monitor
+Move the workspace to the next monitor
+
+```lua
+miaout.workspace:MoveToPrevMonitor(workspace)
+```
+Move the workspace to the previous monitor
+
+```lua
+miaout.workspace:MoveToMonitor(workspace, monitor)
+```
+Move the workspace to a monitor
+
+#### Layouts
+
+```lua
+miaout.workspace:NextLayout(workspace)
+```
+Apply next layout to a workspace
+
+```lua
+miaout.workspace:PrevLayout(workspace)
+```
+Apply previous layout to a workspace
+
+```lua
+miaout.workspace:DefaultLayout(workspace)
+```
+Apply the default layout to a workspace
 
 ### Window
+
+**Some methods need a HL.Winfow as argument, to use the current window:**  
 ```lua
-miaout.window:MoveToNextWorkspace()
+miaout.window.current:method()
 ```
-Move the active window to the next workspace
+#### Navigation
+
 ```lua
-miaout.window:MoveToPrevWorkspace()
+miaout.window:MoveToNextWorkspace(window)
 ```
-Move the active window to the previous workspace
+Move the window to the next workspace
 ```lua
-miaout.window:SwapWindows()
+miaout.window:MoveToPrevWorkspace(window)
 ```
-Swap the active window with the last active window
+Move the window to the previous workspace
+
 ```lua
-miaout.window:SwapWindowMonitor()
+miaout.window:MoveToNextMonitorWorkspace(window)
 ```
-Swap the active window to the next monitor
+Move the window to the next monitor workspace
+
 ```lua
-miaout.window:Fullscreen()
+miaout.window:MoveToPrevMonitorWorkspace(window)
 ```
-Puts the active window in full screen (toggle switch)
+Move the window to the previous monitor workspace
+
 ```lua
-miaout.window:Maximise()
+miaout.window:MoveToNextMonitor(window)
 ```
-Maximise the active window (toggle switch)
+Move the window to the next monitor
+
 ```lua
-miaout.window:Default()
+miaout.window:MoveToPrevMonitor(window)
+```
+Move the window to the previous monitor
+
+```lua
+miaout.window:SwapWindows(windowA, windowB)
+```
+Swap `windowA` with `windowB` (with current, swap with the last active window)
+
+#### Fullscreen States
+
+```lua
+miaout.window:Fullscreen(window)
+```
+Puts the window in full screen (toggle switch)
+
+```lua
+miaout.window:Maximise(window)
+```
+Maximise the window (toggle switch)
+
+```lua
+miaout.window:Default(window)
 ```
 Reset the window fullscreen state to the default value
-
-
