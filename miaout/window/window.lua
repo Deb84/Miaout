@@ -66,4 +66,8 @@ function Window:MoveToMonitor(monitor)
     hl.dispatch(hl.dsp.window.move({ monitor = monitor.name, window = self.hlw }))
 end
 
+function Window:ReSize(x, y)
+    hl.dispatch(hl.dsp.window.resize({x = x, y = y, window = self.hlw}))
+end
+
 return Window

@@ -34,6 +34,7 @@
 ---@field SwapWindow fun(self: Window, window: Window)
 ---@field MoveToWorkspace fun(self: Window, workspace: Workspace)
 ---@field MoveToMonitor fun(self: Window, monitor: HL.Monitor)
+---@field ReSize fun(self: Window, x: integer, y: integer)
 
 ---@alias MoveToWorkspaceLambda fun(self: WorkspaceUtils, workspace: Workspace, monitor: HL.Monitor?)
 
@@ -56,7 +57,9 @@
 ---@field Maximise fun(self: WindowLogic, window: Window)
 ---@field SetFullscreen fun(self: WindowLogic, window: Window)
 ---@field SwapWindows fun(self: WindowLogic, activeWindow: Window, lastWindow: Window)
-
+---@field ReSize fun(self: WindowLogic, window: Window, ratio: number)
+---@field UpScale fun(self: WindowLogic, window: Window)
+---@field DownScale fun(self: WindowLogic, window: Window)
 
 ---@alias WindowFacadeMethod fun(self: WindowFacade, hlWindow: HL.Window)
 
@@ -74,6 +77,8 @@
 ---@field Maximise WindowFacadeMethod
 ---@field Fullscreen WindowFacadeMethod
 ---@field SwapWindows fun(self: WindowFacade, hlWindowA: HL.Window, hlWindowA: HL.Window)
+---@field UpScale fun(self: WindowFacade, hlWindow: HL.Window)
+---@field DownScale fun(self: WindowFacade, hlWindow: HL.Window)
 
 ---@alias CurrentWindowFacadeMethod fun(self: CurrentWindowFacade)
 ---@alias WithActiveWindowCallback fun(self: WindowFacade, hlWindow: HL.Window, ...: any?)
@@ -90,4 +95,6 @@
 ---@field DefaultScreen CurrentWindowFacadeMethod
 ---@field Maximise CurrentWindowFacadeMethod
 ---@field Fullscreen CurrentWindowFacadeMethod
+---@field UpScale CurrentWindowFacadeMethod
+---@field DownScale CurrentWindowFacadeMethod
 

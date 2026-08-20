@@ -26,7 +26,7 @@ end)
 
 ### Workspace
 
-**Some methods need a HL.Workspace as argument, to use the current workspace:**  
+**Some methods need a HL.Workspace as argument, to use the current workspace:**
 ```lua
 miaout.workspace.current:method()
 ```
@@ -91,7 +91,7 @@ Apply the default layout to a workspace
 
 ### Window
 
-**Some methods need a HL.Winfow as argument, to use the current window:**  
+**Some methods need a HL.Winfow as argument, to use the current window:**
 ```lua
 miaout.window.current:method()
 ```
@@ -147,3 +147,13 @@ Maximise the window (toggle switch)
 miaout.window:Default(window)
 ```
 Reset the window fullscreen state to the default value
+
+```lua
+miaout.window:UpScale(window)
+```
+Enlarge the window size according to the config
+
+```lua
+miaout.window:DownScale(window)
+```
+Reduce the window size according to the config

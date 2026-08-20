@@ -8,6 +8,8 @@ function Config.new()
         default = {client = 0, internal = 0},
         maximise = {client = 1, internal = 1},
         fullscreen = {client = 1, internal = 2},
+        upScaleRatio = 1.20,
+        downScaleRatio = 0.80,
     }
 
     Config.workspace = {

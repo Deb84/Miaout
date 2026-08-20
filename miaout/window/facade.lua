@@ -60,6 +60,14 @@ function Current:Fullscreen()
     self:withActiveWindow(self.facade.Fullscreen)
 end
 
+function Current:UpScale()
+    self:withActiveWindow(self.facade.UpScale)
+end
+
+function Current:DownScale()
+    self:withActiveWindow(self.facade.DownScale)
+end
+
 function Current:SwapWithLastWindow()
     local last = hl.get_last_window()
     if not last then
@@ -134,6 +142,16 @@ function WindowFacade:SwapWindows(hlWindowA, hlWindowB)
     local lastWindow = self.windowManager:GetOrNewWindow(hlWindowB)
 
     self.windowLogic:SwapWindows(activeWindow, lastWindow)
+end
+
+function WindowFacade:UpScale(hlWindow)
+    local window = self.windowManager:NewWindow(hlWindow)
+    self.windowLogic:UpScale(window)
+end
+
+function WindowFacade:DownScale(hlWindow)
+    local window = self.windowManager:NewWindow(hlWindow)
+    self.windowLogic:DownScale(window)
 end
 
 return WindowFacade

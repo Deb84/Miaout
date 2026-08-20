@@ -108,6 +108,25 @@ function WindowLogic:SwapWindows(activeWindow, lastWindow)
     activeWindow:UpdateState()
 end
 
+function WindowLogic:ReSize(window, ratio)
+    local size = window:GetHlObject().size
+
+    local x = math.floor(size.x * ratio)
+    local y = math.floor(size.y * ratio)
+
+    window:ReSize(x, y)
+end
+
+function WindowLogic:UpScale(window)
+    local ratio = self.config.window.upScaleRatio
+    self:ReSize(window, ratio)
+end
+
+function WindowLogic:DownScale(window)
+    local ratio = self.config.window.downScaleRatio
+    self:ReSize(window, ratio)
+end
+
 
 return WindowLogic
 

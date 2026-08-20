@@ -11,6 +11,8 @@
 ---@field default FullscreenState
 ---@field maximise FullscreenState
 ---@field fullscreen FullscreenState
+---@field upScaleRatio number
+---@field downScaleRatio number
 
 ---@class WorkspaceConfig
 ---@field nextWorkspaceSelector HL.WorkspaceSelector
