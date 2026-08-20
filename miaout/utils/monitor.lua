@@ -50,7 +50,7 @@ end
 
 function Monitor:GetNextMonitor()
     local func = function (monitorId, monitorsLen)
-        return ((monitorId + 1 + 1) % monitorsLen) + 1
+        return ((monitorId - 1 + 1) % monitorsLen) + 1
     end
 
     return self:GetTargetMonitor(func)
@@ -58,14 +58,11 @@ end
 
 function Monitor:GetPrevMonitor()
     local func = function (monitorId, monitorsLen)
-        return ((monitorId + 1 - 1) % monitorsLen) + 1
+        return ((monitorId - 1 - 1) % monitorsLen) + 1
     end
 
     return self:GetTargetMonitor(func)
 end
-
-
-
 
 
 return Monitor

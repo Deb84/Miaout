@@ -16,7 +16,7 @@ end
 ---@param level string
 ---@param ... string
 function Log:format(level, ...)
-    local text = string.format("%s %s", self.config.prefix, level, ...)
+    local text = string.format("%s %s %s", self.config.prefix, level, ...)
     return text
 end
 

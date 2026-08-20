@@ -4,7 +4,7 @@ Config.__index = Config
 function Config.new()
     local self = setmetatable({}, Config)
 
-    Config.window = {
+    self.window = {
         default = {client = 0, internal = 0},
         maximise = {client = 1, internal = 1},
         fullscreen = {client = 1, internal = 2},
@@ -12,7 +12,7 @@ function Config.new()
         downScaleRatio = 0.80,
     }
 
-    Config.workspace = {
+    self.workspace = {
         nextWorkspaceSelector = "e+1",
         prevWorkspaceSelector = "e-1",
         nextMonitorWorkspaceSelector = "m+1",
@@ -26,7 +26,7 @@ function Config.new()
         }
     }
 
-    Config.notifications = {
+    self.notifications = {
         prefix = "MIAOUT ",
         displayTimeMs = 3000,
     }
